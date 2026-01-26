@@ -1,0 +1,11 @@
+.film {
+  flex: 1;
+  padding: 1rem;
+  background-color: #2a2a3e;
+}
+
+.film-title {
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+  color: #ffffff;
+}

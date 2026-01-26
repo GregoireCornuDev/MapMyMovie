@@ -1,0 +1,14 @@
+.discussion {
+  width: 350px;
+  min-width: 350px;
+  padding: 1rem;
+  background-color: #1e1e2e;
+  border-left: 1px solid #333;
+}
+
+
+.discussion-title {
+  margin: 0 0 1rem 0;
+  font-size: 1.2rem;
+  color: #ffffff;
+}
