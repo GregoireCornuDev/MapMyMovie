@@ -1,0 +1,23 @@
+.movie {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    background-color: #000000;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+/* Marges latérales pour MoviePlayer, Synopsis et MovieMap (pas MovieImage) */
+.movie > .movie-player-container,
+.movie > div:has(.movie-player),
+.movie > .synopsis,
+.movie > .movie-map {
+    margin-left: 4rem;
+    margin-right: 4rem;
+    margin-top: 4rem;
+}
+

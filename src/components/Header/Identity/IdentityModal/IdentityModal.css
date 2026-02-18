@@ -1,0 +1,174 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: #1a1a2e;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    width: 90%;
+    max-width: 500px;
+    overflow: hidden;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid #333;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: #ffffff;
+    font-size: 1.5rem;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: #cccccc;
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 0;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    color: #ffffff;
+}
+
+.modal-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    color: #cccccc;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.form-input {
+    padding: 0.75rem;
+    background-color: #2a2a3e;
+    border: 1px solid #444;
+    border-radius: 4px;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #666;
+    background-color: #333;
+}
+
+.avatar-preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background-color: #2a2a3e;
+    border-radius: 4px;
+    min-height: 150px;
+}
+
+.preview-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.drop-zone {
+    border: 2px dashed #444;
+    border-radius: 4px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    background-color: #2a2a3e;
+    transition: all 0.3s ease;
+}
+
+.drop-zone:hover {
+    border-color: #666;
+    background-color: #333;
+}
+
+.drop-zone.drag-over {
+    border-color: #0066ff;
+    background-color: rgba(0, 102, 255, 0.1);
+}
+
+.drop-zone p {
+    margin: 0.5rem 0;
+    color: #cccccc;
+}
+
+.drop-hint {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-top: 1px solid #333;
+}
+
+.btn-cancel,
+.btn-save {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel {
+    background-color: #444;
+    color: #cccccc;
+}
+
+.btn-cancel:hover {
+    background-color: #555;
+    color: #ffffff;
+}
+
+.btn-save {
+    background-color: #0066ff;
+    color: #ffffff;
+}
+
+.btn-save:hover {
+    background-color: #0052cc;
+}
+

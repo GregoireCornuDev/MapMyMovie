@@ -1,9 +1,13 @@
 import './Header.css'
 
-function Header({ movieTitle }) {
+interface HeaderProps {
+    movieTitle?: string
+}
+
+function Header({ movieTitle }: HeaderProps) {
     return (
         <header className="header">
-            <h1 className="app-title">MapMyMovie</h1>
+            <img src="/icon/mapmymovie.png" alt="MapMyMovie" className="app-logo"/>
             {movieTitle && <span className="movie-title">{movieTitle}</span>}
         </header>
     )

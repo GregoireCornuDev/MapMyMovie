@@ -1,7 +1,12 @@
 import MainPage from './pages/MainPage'
+import { FilmProvider } from './context/FilmContext'
 
 function App() {
-  return <MainPage />
+  return (
+    <FilmProvider>
+      <MainPage />
+    </FilmProvider>
+  )
 }
 
 export default App

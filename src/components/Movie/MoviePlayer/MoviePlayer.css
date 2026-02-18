@@ -1,0 +1,21 @@
+.movie-player-container {
+  width: 100%;
+  max-width: 100%;
+  #padding: 3rem;
+  box-sizing: border-box;
+}
+
+.movie-player {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  background-color: #000;
+  border-radius: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.react-player {
+  width: 100% !important;
+  height: 100% !important;
+}

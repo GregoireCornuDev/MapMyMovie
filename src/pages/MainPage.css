@@ -1,10 +1,73 @@
 .main-page {
   min-height: 100vh;
-  padding-top: 60px; /* Espace pour le header fixe */
+  display: flex;
+  flex-direction: column;
+  background-color: #000;
 }
 
-.content {
+.content-container {
+  flex: 1;
   display: flex;
-  min-height: calc(100vh - 60px);
+  overflow: hidden;
+  gap: 0;
+  padding: 0;
+}
+
+.content-row {
+  display: flex;
   width: 100%;
+  height: 100%;
+  gap: 0;
+}
+
+.left-column {
+  width: calc(75% - 2rem);
+  max-width: calc(75% - 2rem);
+  overflow-y: auto;
+  height: 100vh;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 0;
+  position: relative;
+}
+
+.left-column::-webkit-scrollbar {
+  width: 6px;
+}
+
+.left-column::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.left-column::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+
+.left-column::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.header-overlay {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+}
+
+.left-column > .movie {
+  margin-top: calc(-2rem - 1rem - 1px);
+}
+
+.right-column {
+  position: fixed;
+  right: 1rem;
+  top: 0;
+  width: 25%;
+  height: 100vh;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding-right: 0;
+  padding-bottom: 0;
 }
