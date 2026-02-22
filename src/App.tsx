@@ -1,11 +1,11 @@
 import MainPage from './pages/MainPage'
-import { FilmProvider } from './context/FilmContext'
+import { MovieProvider } from './context/MovieContext'
 
 function App() {
   return (
-    <FilmProvider>
+    <MovieProvider>
       <MainPage />
-    </FilmProvider>
+    </MovieProvider>
   )
 }
 

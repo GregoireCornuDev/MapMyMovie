@@ -4,41 +4,26 @@ import MovieImage from './MovieImage/MovieImage'
 import MoviePlayer from './MoviePlayer/MoviePlayer'
 import Synopsis from './Synopsis/Synopsis'
 import MovieMap from './MovieMap/MovieMap'
-import { FilmData } from '../../context/FilmContext'
+import { MovieData, useMovieContext } from '../../context/MovieContext'
 
 interface MovieProps {
-    filmData: FilmData
-    userName?: string
-    userAvatarUrl?: string
-    playing: boolean
-    currentTime: number
-    onPlayingChange: (playing: boolean) => void
-    onTimeUpdate: (time: number) => void
+    filmData: MovieData
     onWatchNow: () => void
     playerRef: RefObject<HTMLDivElement | null>
 }
 
 function Movie({
     filmData,
-    userName: _userName,
-    userAvatarUrl: _userAvatarUrl,
-    playing,
-    currentTime,
-    onPlayingChange,
-    onTimeUpdate,
     onWatchNow,
     playerRef
 }: MovieProps) {
+    const { currentTime } = useMovieContext()
+
     return (
         <div className="movie">
             <MovieImage title={filmData.film.title} onWatchNow={onWatchNow} />
             <div ref={playerRef}>
-                <MoviePlayer
-                    filmData={filmData}
-                    playing={playing}
-                    onPlayingChange={onPlayingChange}
-                    onTimeUpdate={onTimeUpdate}
-                />
+                <MoviePlayer filmData={filmData} />
             </div>
             <Synopsis synopsisUrl={filmData.film.synopsis_url} title="Synopsis" />
             <MovieMap currentTime={currentTime} />

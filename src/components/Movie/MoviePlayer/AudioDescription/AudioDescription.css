@@ -1,0 +1,175 @@
+.audio-description-container {
+    position: relative;
+    display: inline-block;
+}
+
+.audio-description-loading {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem;
+    padding: 0.5rem;
+}
+
+.audio-description-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.audio-description-toggle:hover,
+.audio-description-toggle:focus {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.audio-description-toggle.enabled {
+    border-color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.2);
+}
+
+.ad-icon {
+    background-color: white;
+    color: black;
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    font-weight: bold;
+    font-size: 0.75rem;
+}
+
+.ad-label {
+    font-size: 0.85rem;
+}
+
+.ad-arrow {
+    font-size: 0.7rem;
+    margin-left: 0.3rem;
+}
+
+.audio-description-menu {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    background-color: rgba(30, 30, 30, 0.98);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    min-width: 320px;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+/* Activation checkbox */
+.ad-enable-row {
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 0.75rem;
+}
+
+.ad-enable-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.ad-enable-label input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
+}
+
+/* Sélecteur de langue */
+.ad-lang-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 0.75rem;
+}
+
+.ad-lang-label {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-right: 0.5rem;
+}
+
+.ad-lang-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 0.25rem 0.4rem;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0.6;
+}
+
+.ad-lang-btn:hover {
+    opacity: 1;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.ad-lang-btn.active {
+    opacity: 1;
+    border-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Scène actuelle */
+.ad-current-scene {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    padding: 0.75rem;
+}
+
+.ad-scene-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.ad-scene-number {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ad-scene-timestamp {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-family: monospace;
+}
+
+.ad-scene-text {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Classe pour lecteurs d'écran - invisible visuellement mais accessible */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+

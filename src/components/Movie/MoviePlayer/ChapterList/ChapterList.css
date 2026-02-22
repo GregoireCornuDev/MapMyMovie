@@ -1,0 +1,173 @@
+.chapter-list-container {
+    position: relative;
+    display: inline-block;
+}
+
+.chapter-list-loading,
+.chapter-list-error {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem;
+    padding: 0.5rem;
+}
+
+.chapter-dropdown-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.chapter-dropdown-toggle:hover,
+.chapter-dropdown-toggle:focus {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.chapter-arrow {
+    font-size: 0.7rem;
+    margin-left: 0.3rem;
+}
+
+.chapter-icon {
+    font-size: 1rem;
+}
+
+.chapter-current {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.chapter-dropdown-menu {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    background-color: rgba(30, 30, 30, 0.98);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    max-height: 400px;
+    overflow-y: auto;
+    min-width: 350px;
+    padding: 0.5rem 0;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+/* Sélecteur de langue */
+.chapter-lang-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 0.5rem;
+}
+
+.chapter-lang-label {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-right: 0.5rem;
+}
+
+.chapter-lang-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 0.25rem 0.4rem;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0.6;
+}
+
+.chapter-lang-btn:hover {
+    opacity: 1;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.chapter-lang-btn.active {
+    opacity: 1;
+    border-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.chapter-dropdown-menu::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chapter-dropdown-menu::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.chapter-dropdown-menu::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+
+.chapter-item {
+    padding: 0.75rem 1rem;
+    color: white;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.chapter-item:last-child {
+    border-bottom: none;
+}
+
+.chapter-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.chapter-item.active {
+    background-color: rgba(13, 110, 253, 0.3);
+    border-left: 3px solid #0d6efd;
+}
+
+.chapter-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+}
+
+.chapter-number {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.chapter-timestamp {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-family: monospace;
+}
+
+.chapter-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+    color: white;
+}
+
+.chapter-description {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+

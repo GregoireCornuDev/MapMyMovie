@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { DiscussionMessage } from '../types/Message';
 
 export function useDiscussionSocket(url: string) {

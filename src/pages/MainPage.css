@@ -5,6 +5,7 @@
   background-color: #000;
 }
 
+
 .content-container {
   flex: 1;
   display: flex;
@@ -21,7 +22,7 @@
 }
 
 .left-column {
-  width: calc(75% - 2rem);
+   width: calc(75% - 2rem);
   max-width: calc(75% - 2rem);
   overflow-y: auto;
   height: 100vh;
