@@ -12,7 +12,7 @@ interface MoviePlayerProps {
 type SubtitleLang = 'fr' | 'en' | 'es' | 'off'
 
 const subtitleLabels: Record<SubtitleLang, string> = {
-    fr: 'Français', en: 'English', es: 'Español', off: 'Désactivés'
+    fr: '🇫🇷 Français', en: '🇬🇧 English', es: '🇪🇸 Español', off: '❌ Désactivés'
 }
 
 function MoviePlayer({ filmData }: MoviePlayerProps) {
