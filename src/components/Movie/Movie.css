@@ -11,13 +11,11 @@
     box-sizing: border-box;
 }
 
-/* Marges latérales pour MoviePlayer, Synopsis et MovieMap (pas MovieImage) */
 .movie > .movie-player-container,
-.movie > div:has(.movie-player),
 .movie > .synopsis,
+.movie > div:has(.movie-player),
 .movie > .movie-map {
-    margin-left: 4rem;
-    margin-right: 4rem;
-    margin-top: 4rem;
+    margin-left: 5rem;
+    margin-right: 5rem;
 }
 

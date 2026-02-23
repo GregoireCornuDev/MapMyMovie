@@ -4,7 +4,7 @@ import MovieImage from './MovieImage/MovieImage'
 import MoviePlayer from './MoviePlayer/MoviePlayer'
 import Synopsis from './Synopsis/Synopsis'
 import MovieMap from './MovieMap/MovieMap'
-import { MovieData, useMovieContext } from '../../context/MovieContext'
+import { MovieData } from '../../context/MovieContext'
 
 interface MovieProps {
     filmData: MovieData
@@ -17,16 +17,15 @@ function Movie({
     onWatchNow,
     playerRef
 }: MovieProps) {
-    const { currentTime } = useMovieContext()
 
     return (
         <div className="movie">
             <MovieImage title={filmData.film.title} onWatchNow={onWatchNow} />
+            <Synopsis synopsisUrl={filmData.film.synopsis_url} title="Synopsis" />
             <div ref={playerRef}>
                 <MoviePlayer filmData={filmData} />
             </div>
-            <Synopsis synopsisUrl={filmData.film.synopsis_url} title="Synopsis" />
-            <MovieMap currentTime={currentTime} />
+            <MovieMap poiUrl={filmData.poi} />
         </div>
     )
 }

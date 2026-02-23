@@ -1,5 +1,5 @@
 import './MoviePlayer.css'
-import {useState, useRef, useEffect, useMemo} from 'react'
+import { useState, useRef, useEffect } from 'react'
 import ReactPlayer from 'react-player'
 import ChapterList from './ChapterList/ChapterList'
 import AudioDescription from './AudioDescription/AudioDescription'
@@ -45,22 +45,32 @@ function MoviePlayer({ filmData }: MoviePlayerProps) {
         }
     }
 
-    const playerConfig = useMemo(() => ({
-        file: {
-            tracks: [
-                { kind: 'subtitles', src: filmData.subtitles.fr, srcLang: 'fr', label: 'Français', default: true },
-                { kind: 'subtitles', src: filmData.subtitles.en, srcLang: 'en', label: 'English' },
-                { kind: 'subtitles', src: filmData.subtitles.es, srcLang: 'es', label: 'Español' },
-            ]
-        }
-    }), [filmData.subtitles])
+    useEffect(() => {
+        const video = playerRef.current
+        if (!video || video.textTracks.length > 0) return
+            ;[
+            { src: filmData.subtitles.fr, srcLang: 'fr', label: 'Français' },
+            { src: filmData.subtitles.en, srcLang: 'en', label: 'English' },
+            { src: filmData.subtitles.es, srcLang: 'es', label: 'Español' },
+        ].forEach(({ src, srcLang, label }) => {
+            const track = document.createElement('track')
+            track.kind = 'subtitles'
+            track.src = src
+            track.srclang = srcLang
+            track.label = label
+            video.appendChild(track)
+            const textTrack = video.textTracks[video.textTracks.length - 1]
+            if (textTrack) textTrack.mode = 'hidden'
+        })
+        setTimeout(() => handleSubtitleChange('fr'), 3000)
+    }, [])
 
     return (
         <div className="movie-player-container">
             <div className="movie-player">
                 <ReactPlayer
                     ref={playerRef}
-                    url={filmData.film.file_url}
+                    src={filmData.film.file_url}
                     controls
                     playing={isPlaying}
                     width="100%"
@@ -68,13 +78,11 @@ function MoviePlayer({ filmData }: MoviePlayerProps) {
                     onPlay={() => setIsPlaying(true)}
                     onPause={() => setIsPlaying(false)}
                     onError={console.error}
-                    config={playerConfig}
                 />
             </div>
 
             <div className="player-controls">
                 <ChapterList chaptersUrl={filmData.chapters} />
-
                 <div className="subtitle-selector">
                     <button className="subtitle-btn" onClick={() => setShowSubMenu(!showSubMenu)}>
                         <span className="cc-icon">CC</span>
@@ -94,7 +102,6 @@ function MoviePlayer({ filmData }: MoviePlayerProps) {
                         </div>
                     )}
                 </div>
-
                 <AudioDescription descriptionUrl={filmData["audio-description"]} />
             </div>
         </div>
