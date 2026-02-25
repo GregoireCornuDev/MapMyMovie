@@ -91,7 +91,16 @@ function MovieMap({ poiUrl }: MovieMapProps) {
 
     // Charge les points d'intérêt depuis le backend
     useEffect(() => {
-        fetch(poiUrl).then(r => r.json()).then(setPois).catch(console.error)
+        fetch(poiUrl)
+            .then(r => {
+                if (!r.ok) throw new Error('Indisponible')
+                return r.json()
+            })
+            .then(setPois)
+            .catch(() => {
+                console.warn('POI indisponibles, utilisation du fallback local')
+                fetch('/mocks/poi.json').then(r => r.json()).then(setPois)
+            })
     }, [poiUrl])
 
     const active = getActivePoi(pois, currentTime)
