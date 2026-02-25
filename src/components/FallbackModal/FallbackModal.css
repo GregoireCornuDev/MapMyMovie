@@ -1,44 +1,85 @@
-.fallback-modal .modal-content {
-    background-color: #1a1a1a;
+.fallback-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.fallback-modal {
+    background: #1e1e1e;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.fallback-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.fallback-icon {
+    font-size: 1.5rem;
+}
+
+.fallback-header h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: white;
+    font-weight: 600;
+}
+
+.fallback-body p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.fallback-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.fallback-btn {
+    padding: 0.5rem 1.25rem;
+    border-radius: 6px;
+    border: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.fallback-btn.secondary {
+    background: rgba(255, 255, 255, 0.1);
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.fallback-modal .modal-header {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+.fallback-btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
 }
 
-.fallback-modal .modal-title {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+.fallback-btn.primary {
+    background: #0d6efd;
+    color: white;
 }
 
-.fallback-modal .warning-icon {
-    font-size: 1.5rem;
+.fallback-btn.primary:hover {
+    background: #0b5ed7;
 }
 
-.fallback-modal .modal-body p {
-    margin-bottom: 0;
-    color: rgba(255, 255, 255, 0.8);
+.fallback-btn:focus {
+    outline: 2px solid white;
+    outline-offset: 2px;
 }
-
-.fallback-modal .modal-footer {
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.fallback-modal .btn-secondary {
-    background-color: #444;
-    border-color: #555;
-}
-
-.fallback-modal .btn-secondary:hover {
-    background-color: #555;
-    border-color: #666;
-}
-
-.fallback-modal .btn-primary {
-    background-color: #0d6efd;
-    border-color: #0d6efd;
-}
-
