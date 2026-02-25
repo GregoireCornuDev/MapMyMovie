@@ -1,8 +1,8 @@
 import './MainPage.css'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Header from '../components/Header/Header'
 import Movie from '../components/Movie/Movie'
-import Discuss from '../components/Discuss/Discussion'
+import Discuss from '../components/Discussion/Discussion'
 import { useMovieContext } from '../context/MovieContext'
 import FallbackModal from '../components/FallbackModal/FallbackModal'
 
@@ -18,30 +18,34 @@ function MainPage() {
         setIsPlaying
     } = useMovieContext()
 
-    const [userName, setUserName] = useState("Who are you ?")
-    const [userAvatarUrl, setUserAvatarUrl] = useState("/avatar/zombi.png")
+    const [userName, setUserName] = useState(
+        localStorage.getItem('identity_name') || "Who are you ?"
+    )
     const playerRef = useRef<HTMLDivElement>(null)
+    const leftColumnRef = useRef<HTMLDivElement>(null)
+
+    // Repositionne la colonne gauche en haut à l'arrivée sur la page
+    useEffect(() => {
+        leftColumnRef.current?.scrollTo(0, 0)
+    }, [])
 
     const movieTitle = filmData?.film.title || "La nuit des morts vivants (1968)"
 
-    const handleIdentityChange = (name: string, avatarUrl: string) => {
+    // Met à jour le nom d'utilisateur quand l'identité change
+    const handleIdentityChange = (name: string, _avatarUrl: string) => {
         setUserName(name)
-        setUserAvatarUrl(avatarUrl)
     }
 
+    // Scrolle jusqu'au lecteur et lance la lecture
     const handleWatchNow = () => {
-        // Scroll jusqu'au lecteur
         playerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-        // Lancer la lecture après un court délai pour laisser le scroll s'achever.
-        // On choisit 900ms comme délai raisonnable et simple.
-        setTimeout(() => {
-            setIsPlaying(true)
-        }, 900)
+        setTimeout(() => setIsPlaying(true), 900)
     }
 
     return (
-        <div className="main-page">
-            {/* Modale si le backend est indisponible */}
+        // role="application" indique aux lecteurs d'écran que c'est une app interactive
+        <div className="main-page" role="application" aria-label={movieTitle}>
+
             <FallbackModal
                 show={showFallbackModal}
                 onUseMock={useMock}
@@ -50,13 +54,13 @@ function MainPage() {
 
             <div className="content-container">
                 <div className="content-row">
-                    {/* Colonne gauche : Header + Poster + Film + Carte */}
-                    <div className="left-column">
+                    {/* Colonne principale : contenu du film */}
+                    <main className="left-column" ref={leftColumnRef} aria-label="Contenu principal">
                         <div className="header-overlay">
                             <Header movieTitle={movieTitle} />
                         </div>
-                        {loading && <div>Chargement...</div>}
-                        {error && <div>Erreur : {error}</div>}
+                        {loading && <div role="status" aria-live="polite">Chargement...</div>}
+                        {error && <div role="alert">{error}</div>}
                         {filmData && (
                             <Movie
                                 filmData={filmData}
@@ -64,17 +68,17 @@ function MainPage() {
                                 playerRef={playerRef}
                             />
                         )}
-                    </div>
+                    </main>
 
-                    {/* Colonne droite : Discussion */}
-                    <div className="right-column">
+                    {/* Colonne secondaire : discussion */}
+                    <aside className="right-column" aria-label="Discussion">
                         <Discuss
+                            wsUrl="wss://tp-iai3.cleverapps.io/"
                             userName={userName}
-                            userAvatarUrl={userAvatarUrl}
                             onIdentityChange={handleIdentityChange}
                             currentTime={currentTime}
                         />
-                    </div>
+                    </aside>
                 </div>
             </div>
         </div>

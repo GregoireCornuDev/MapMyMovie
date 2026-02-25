@@ -3,45 +3,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { SceneDescription } from '../../../../types/AudioDescription'
 import { timestampToSeconds } from '../../../../types/Chapter'
 import { useMovieContext } from '../../../../context/MovieContext'
-
-// Données de fallback si le backend est indisponible
-const FALLBACK_DESCRIPTIONS: SceneDescription[] = [
-    {
-        scene: 1,
-        timestamp: "00:00:00",
-        description: "Black and white film. Opening credits appear over a winding country road.",
-        description_fr: "Film en noir et blanc. Le générique d'ouverture apparaît sur une route de campagne sinueuse.",
-        description_es: "Película en blanco y negro. Los créditos de apertura aparecen sobre un camino rural serpenteante."
-    },
-    {
-        scene: 2,
-        timestamp: "00:02:00",
-        description: "A car drives through the Pennsylvania countryside. Inside, a young woman and a man.",
-        description_fr: "Une voiture traverse la campagne de Pennsylvanie. À l'intérieur, une jeune femme et un homme.",
-        description_es: "Un coche atraviesa el campo de Pensilvania. Dentro, una joven y un hombre."
-    },
-    {
-        scene: 3,
-        timestamp: "00:05:20",
-        description: "The pale-faced man attacks. Johnny tries to fight him off but is thrown against a gravestone.",
-        description_fr: "L'homme au visage pâle attaque. Johnny essaie de le repousser mais est projeté contre une pierre tombale.",
-        description_es: "El hombre de rostro pálido ataca. Johnny intenta rechazarlo pero es arrojado contra una lápida."
-    },
-    {
-        scene: 4,
-        timestamp: "00:10:00",
-        description: "Barbara runs through the cemetery, terrified. She reaches an abandoned farmhouse.",
-        description_fr: "Barbara court à travers le cimetière, terrifiée. Elle atteint une ferme abandonnée.",
-        description_es: "Barbara corre por el cementerio, aterrorizada. Llega a una granja abandonada."
-    },
-    {
-        scene: 5,
-        timestamp: "00:20:00",
-        description: "Ben arrives at the farmhouse. He starts boarding up the windows and doors.",
-        description_fr: "Ben arrive à la ferme. Il commence à condamner les fenêtres et les portes.",
-        description_es: "Ben llega a la granja. Comienza a tapiar las ventanas y puertas."
-    }
-]
+import { FALLBACK_DESCRIPTIONS } from '../../../../mocks/audioDescriptionFallback.ts'
 
 interface AudioDescriptionProps {
     descriptionUrl: string
@@ -49,36 +11,103 @@ interface AudioDescriptionProps {
 
 type DescLang = 'en' | 'fr' | 'es'
 
-// Mapping des langues pour la synthèse vocale
+// Codes langue pour la synthèse vocale Web Speech API
 const SPEECH_LANG_MAP: Record<DescLang, string> = {
     fr: 'fr-FR',
     en: 'en-US',
     es: 'es-ES'
 }
 
+// Seul le MP3 anglais est disponible — FR et ES sont grisés
+const MP3_SOURCES: Partial<Record<DescLang, string>> = {
+    en: '/mocks/audio-description-en.mp3'
+}
+
 function AudioDescription({ descriptionUrl }: AudioDescriptionProps) {
-    const { currentTime } = useMovieContext()
+    const { currentTime, isPlaying, setIsVideoMuted } = useMovieContext()
 
     const [descriptions, setDescriptions] = useState<SceneDescription[]>([])
     const [loading, setLoading] = useState(true)
     const [isOpen, setIsOpen] = useState(false)
     const [lang, setLang] = useState<DescLang>('fr')
     const [enabled, setEnabled] = useState(false)
+
+    // État du lecteur MP3
+    const [mp3Lang, setMp3Lang] = useState<DescLang>('en')
+    const [mp3Playing, setMp3Playing] = useState(false)
+    const [mp3Volume, setMp3Volume] = useState(1)
+    const mp3Ref = useRef<HTMLAudioElement | null>(null)
+
     const lastSpokenSceneRef = useRef<number | null>(null)
     const synthRef = useRef<SpeechSynthesis | null>(null)
 
-    // Initialiser la synthèse vocale
+    // Initialise la synthèse vocale si disponible dans le navigateur
     useEffect(() => {
-        if ('speechSynthesis' in window) {
-            synthRef.current = window.speechSynthesis
-        }
+        if ('speechSynthesis' in window) synthRef.current = window.speechSynthesis
+        return () => { synthRef.current?.cancel() }
+    }, [])
+
+    // Initialise l'élément audio MP3
+    useEffect(() => {
+        mp3Ref.current = new Audio()
+        mp3Ref.current.onended = () => setMp3Playing(false)
         return () => {
-            // Arrêter la synthèse vocale si le composant est démonté
-            synthRef.current?.cancel()
+            mp3Ref.current?.pause()
+            mp3Ref.current = null
         }
     }, [])
 
-    // Obtenir la description dans la bonne langue
+    // Synchronise le volume du MP3 avec le curseur
+    useEffect(() => {
+        if (mp3Ref.current) mp3Ref.current.volume = mp3Volume
+    }, [mp3Volume])
+
+    // Pause/reprise du MP3 liée à isPlaying du film
+    useEffect(() => {
+        const audio = mp3Ref.current
+        if (!audio || !mp3Playing) return
+        if (isPlaying) {
+            audio.play()
+        } else {
+            audio.pause()
+        }
+    }, [isPlaying, mp3Playing])
+
+    // Synchronise le timecode du MP3 avec celui du film
+    useEffect(() => {
+        const audio = mp3Ref.current
+        if (!audio || !mp3Playing) return
+        // Ne seek que si l'écart est significatif (> 2s) pour éviter les micro-corrections
+        if (audio.duration && currentTime <= audio.duration) {
+            if (Math.abs(audio.currentTime - currentTime) > 2) {
+                audio.currentTime = currentTime
+            }
+        }
+    }, [currentTime, mp3Playing])
+
+    // Lance ou arrête le MP3 et le positionne au timecode actuel du film
+    const toggleMp3 = () => {
+        const audio = mp3Ref.current
+        const src = MP3_SOURCES[mp3Lang]
+        if (!audio || !src) return
+
+        if (mp3Playing) {
+            audio.pause()
+            setMp3Playing(false)
+            // Remet le son de la vidéo
+            setIsVideoMuted(false)
+        } else {
+            audio.src = src
+            audio.volume = mp3Volume
+            audio.currentTime = currentTime
+            setIsVideoMuted(true) // Coupe le son de la vidéo
+            setTimeout(() => {
+                audio.play()
+                setMp3Playing(true)
+            }, 2000)
+        }
+    }
+
     const getDescription = useCallback((scene: SceneDescription): string => {
         switch (lang) {
             case 'fr': return scene.description_fr
@@ -87,23 +116,18 @@ function AudioDescription({ descriptionUrl }: AudioDescriptionProps) {
         }
     }, [lang])
 
-    // Fonction pour lire une description à voix haute
     const speakDescription = useCallback((text: string) => {
         if (!synthRef.current) return
-
-        // Arrêter toute lecture en cours
         synthRef.current.cancel()
-
         const utterance = new SpeechSynthesisUtterance(text)
         utterance.lang = SPEECH_LANG_MAP[lang]
         utterance.rate = 1.0
         utterance.pitch = 1.0
         utterance.volume = 1.0
-
         synthRef.current.speak(utterance)
     }, [lang])
 
-    // Arrêter la synthèse vocale quand on désactive
+    // Arrête la synthèse vocale quand on désactive l'audio-description
     useEffect(() => {
         if (!enabled && synthRef.current) {
             synthRef.current.cancel()
@@ -111,19 +135,16 @@ function AudioDescription({ descriptionUrl }: AudioDescriptionProps) {
         }
     }, [enabled])
 
-    // Charger les descriptions depuis l'URL
+    // Charge les descriptions depuis le backend, avec fallback si indisponible
     useEffect(() => {
         const fetchDescriptions = async () => {
             try {
                 const controller = new AbortController()
                 const timeoutId = setTimeout(() => controller.abort(), 3000)
-
                 const response = await fetch(descriptionUrl, { signal: controller.signal })
                 clearTimeout(timeoutId)
-
                 if (!response.ok) throw new Error('Erreur')
-                const data = await response.json()
-                setDescriptions(data)
+                setDescriptions(await response.json())
             } catch {
                 console.warn('Descriptions indisponibles, utilisation du fallback')
                 setDescriptions(FALLBACK_DESCRIPTIONS)
@@ -131,45 +152,32 @@ function AudioDescription({ descriptionUrl }: AudioDescriptionProps) {
                 setLoading(false)
             }
         }
-
-        if (descriptionUrl) {
-            fetchDescriptions()
-        }
+        if (descriptionUrl) fetchDescriptions()
     }, [descriptionUrl])
 
-    // Fermer le menu quand on clique ailleurs
+    // Ferme le menu si on clique en dehors
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
             const target = e.target as HTMLElement
-            if (isOpen && !target.closest('.audio-description-container')) {
-                setIsOpen(false)
-            }
+            if (isOpen && !target.closest('.audio-description-container')) setIsOpen(false)
         }
-
         document.addEventListener('click', handleClickOutside)
         return () => document.removeEventListener('click', handleClickOutside)
     }, [isOpen])
 
-    // Trouver la scène actuelle basée sur le temps de lecture
     const getCurrentScene = useCallback((): SceneDescription | null => {
         if (descriptions.length === 0) return null
-
         for (let i = descriptions.length - 1; i >= 0; i--) {
-            const sceneTime = timestampToSeconds(descriptions[i].timestamp)
-            if (currentTime >= sceneTime) {
-                return descriptions[i]
-            }
+            if (currentTime >= timestampToSeconds(descriptions[i].timestamp)) return descriptions[i]
         }
         return descriptions[0]
     }, [descriptions, currentTime])
 
     const currentScene = getCurrentScene()
 
-    // Détecter le changement de scène et lire la description
+    // Lit la description synthétisée quand la scène change
     useEffect(() => {
         if (!enabled || !currentScene) return
-
-        // Si c'est une nouvelle scène, la lire
         if (currentScene.scene !== lastSpokenSceneRef.current) {
             lastSpokenSceneRef.current = currentScene.scene
             speakDescription(getDescription(currentScene))
@@ -177,7 +185,7 @@ function AudioDescription({ descriptionUrl }: AudioDescriptionProps) {
     }, [enabled, currentScene, speakDescription, getDescription])
 
     if (loading) {
-        return <div className="audio-description-loading">Chargement...</div>
+        return <div role="status" aria-live="polite" className="audio-description-loading">Chargement...</div>
     }
 
     return (
@@ -185,55 +193,118 @@ function AudioDescription({ descriptionUrl }: AudioDescriptionProps) {
             <button
                 className={`audio-description-toggle ${enabled ? 'enabled' : ''}`}
                 onClick={() => setIsOpen(!isOpen)}
+                aria-expanded={isOpen}
+                aria-controls="audio-description-menu"
+                aria-label={`Audio-description ${enabled ? 'activée' : 'désactivée'}`}
             >
-                <span className="ad-icon">AD</span>
+                <span className="ad-icon" aria-hidden="true">AD</span>
                 <span className="ad-label">Audio-description</span>
-                <span className="ad-arrow">{isOpen ? '▲' : '▼'}</span>
+                <span className="ad-arrow" aria-hidden="true">{isOpen ? '▲' : '▼'}</span>
             </button>
 
             {isOpen && (
-                <div className="audio-description-menu">
-                    {/* Activation */}
+                <div
+                    id="audio-description-menu"
+                    className="audio-description-menu"
+                    role="region"
+                    aria-label="Options d'audio-description"
+                >
+                    {/* Section MP3 */}
+                    <div className="ad-mp3-section">
+                        <div className="ad-lang-selector" role="group" aria-label="Langue de la piste MP3">
+                            <span className="ad-lang-label" aria-hidden="true">Piste audio :</span>
+                            {(['fr', 'en', 'es'] as DescLang[]).map(l => (
+                                <button
+                                    key={l}
+                                    className={`ad-lang-btn ${mp3Lang === l ? 'active' : ''} ${!MP3_SOURCES[l] ? 'disabled' : ''}`}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        if (MP3_SOURCES[l]) setMp3Lang(l)
+                                    }}
+                                    aria-label={l === 'fr' ? 'Français' : l === 'en' ? 'English' : 'Español'}
+                                    aria-pressed={mp3Lang === l}
+                                    disabled={!MP3_SOURCES[l]}
+                                    aria-disabled={!MP3_SOURCES[l]}
+                                >
+                                    <span aria-hidden="true">{l === 'fr' ? '🇫🇷' : l === 'en' ? '🇬🇧' : '🇪🇸'}</span>
+                                </button>
+                            ))}
+
+                            {/* Curseur de volume */}
+                            <input
+                                type="range"
+                                className="ad-volume"
+                                min={0}
+                                max={1}
+                                step={0.05}
+                                value={mp3Volume}
+                                onChange={(e) => setMp3Volume(Number(e.target.value))}
+                                aria-label="Volume de la piste audio"
+                                aria-valuemin={0}
+                                aria-valuemax={100}
+                                aria-valuenow={Math.round(mp3Volume * 100)}
+                                aria-valuetext={`Volume : ${Math.round(mp3Volume * 100)}%`}
+                                title={`Volume : ${Math.round(mp3Volume * 100)}%`}
+                            />
+                        </div>
+
+                        {/* Bouton lecture/arrêt MP3 */}
+                        <button
+                            className={`ad-mp3-btn ${mp3Playing ? 'playing' : ''}`}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                toggleMp3()
+                            }}
+                            aria-label={mp3Playing ? 'Arrêter la piste audio' : 'Lire la piste audio'}
+                            aria-pressed={mp3Playing}
+                        >
+                            <span aria-hidden="true">{mp3Playing ? '🔇' : '🔊'}</span>
+                            <span>{mp3Playing ? 'Arrêter' : 'Lire la piste audio'}</span>
+                        </button>
+                    </div>
+
+                    <div className="ad-separator" aria-hidden="true"/>
+
+                    {/* Section synthèse vocale */}
                     <div className="ad-enable-row">
                         <label className="ad-enable-label">
                             <input
                                 type="checkbox"
                                 checked={enabled}
                                 onChange={(e) => setEnabled(e.target.checked)}
+                                aria-describedby="ad-current-scene"
                             />
                             <span>Activer l'audio-description</span>
                         </label>
                     </div>
 
-                    {/* Sélecteur de langue */}
-                    <div className="ad-lang-selector">
-                        <span className="ad-lang-label">Langue :</span>
+                    <div className="ad-lang-selector" role="group" aria-label="Langue de l'audio-description">
+                        <span className="ad-lang-label" aria-hidden="true">Langue :</span>
                         <button
                             className={`ad-lang-btn ${lang === 'fr' ? 'active' : ''}`}
                             onClick={(e) => { e.stopPropagation(); setLang('fr') }}
-                            title="Français"
+                            aria-label="Français" aria-pressed={lang === 'fr'}
                         >
-                            🇫🇷
+                            <span aria-hidden="true">🇫🇷</span>
                         </button>
                         <button
                             className={`ad-lang-btn ${lang === 'en' ? 'active' : ''}`}
                             onClick={(e) => { e.stopPropagation(); setLang('en') }}
-                            title="English"
+                            aria-label="English" aria-pressed={lang === 'en'}
                         >
-                            🇬🇧
+                            <span aria-hidden="true">🇬🇧</span>
                         </button>
                         <button
                             className={`ad-lang-btn ${lang === 'es' ? 'active' : ''}`}
                             onClick={(e) => { e.stopPropagation(); setLang('es') }}
-                            title="Español"
+                            aria-label="Español" aria-pressed={lang === 'es'}
                         >
-                            🇪🇸
+                            <span aria-hidden="true">🇪🇸</span>
                         </button>
                     </div>
 
-                    {/* Prévisualisation de la scène actuelle */}
                     {currentScene && (
-                        <div className="ad-current-scene">
+                        <div id="ad-current-scene" className="ad-current-scene" aria-live="polite">
                             <div className="ad-scene-header">
                                 <span className="ad-scene-number">Scène {currentScene.scene}</span>
                                 <span className="ad-scene-timestamp">{currentScene.timestamp}</span>
@@ -244,14 +315,9 @@ function AudioDescription({ descriptionUrl }: AudioDescriptionProps) {
                 </div>
             )}
 
-            {/* Zone accessible pour les lecteurs d'écran - toujours présente mais cachée visuellement */}
+            {/* Zone annoncée aux lecteurs d'écran à chaque changement de scène, cachée visuellement */}
             {enabled && currentScene && (
-                <div
-                    role="status"
-                    aria-live="polite"
-                    aria-atomic="true"
-                    className="sr-only"
-                >
+                <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
                     Scène {currentScene.scene}: {getDescription(currentScene)}
                 </div>
             )}
@@ -260,4 +326,3 @@ function AudioDescription({ descriptionUrl }: AudioDescriptionProps) {
 }
 
 export default AudioDescription
-

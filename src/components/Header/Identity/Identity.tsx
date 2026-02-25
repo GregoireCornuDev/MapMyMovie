@@ -13,36 +13,36 @@ function Identity({ name: defaultName = "Who are you ?", avatarUrl: defaultAvata
     const [name, setName] = useState(defaultName)
     const [avatarUrl, setAvatarUrl] = useState(defaultAvatarUrl)
 
-    // Charger depuis LocalStorage au montage
+    // Charge le nom et l'avatar sauvegardés au montage
     useEffect(() => {
         const savedName = localStorage.getItem('identity_name')
         const savedAvatarUrl = localStorage.getItem('identity_avatar')
-
         if (savedName) setName(savedName)
         if (savedAvatarUrl) setAvatarUrl(savedAvatarUrl)
     }, [])
 
+    // Sauvegarde les nouvelles valeurs et remonte les données au parent
     const handleSave = (newName: string, newAvatarUrl: string) => {
         setName(newName)
         setAvatarUrl(newAvatarUrl)
-
-        // Sauvegarder en LocalStorage
         localStorage.setItem('identity_name', newName)
         localStorage.setItem('identity_avatar', newAvatarUrl)
-
-        // Appeler le callback pour remonter les données
-        if (onIdentityChange) {
-            onIdentityChange(newName, newAvatarUrl)
-        }
+        onIdentityChange?.(newName, newAvatarUrl)
     }
 
     return (
         <>
-            <div className="identity" onClick={() => setIsModalOpen(true)}>
+            {/* Bouton d'identité — ouvre la modale de modification */}
+            <button
+                className="identity"
+                onClick={() => setIsModalOpen(true)}
+                aria-label={`Modifier votre identité — actuellement : ${name}`}
+                aria-haspopup="dialog"
+            >
                 <span className="identity-name">{name}</span>
-                <img src={avatarUrl} alt={name} className="identity-avatar"/>
-
-            </div>
+                {/* alt vide : l'image est décorative, le nom suffit */}
+                <img src={avatarUrl} alt="" aria-hidden="true" className="identity-avatar" />
+            </button>
 
             <IdentityModal
                 isOpen={isModalOpen}
@@ -56,7 +56,3 @@ function Identity({ name: defaultName = "Who are you ?", avatarUrl: defaultAvata
 }
 
 export default Identity
-
-
-
-

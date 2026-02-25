@@ -12,24 +12,28 @@ interface MovieProps {
     playerRef: RefObject<HTMLDivElement | null>
 }
 
-function Movie({
-    filmData,
-    onWatchNow,
-    playerRef
-}: MovieProps) {
-
+function Movie({ filmData, onWatchNow, playerRef }: MovieProps) {
     return (
-        <div className="movie">
+        <article className="movie" aria-label={filmData.film.title}>
+
+            {/* Image d'affiche avec bouton de lancement */}
             <MovieImage title={filmData.film.title} onWatchNow={onWatchNow} />
+
+            {/* Synopsis récupéré depuis Wikipedia */}
             <Synopsis synopsisUrl={filmData.film.synopsis_url} title="Synopsis" />
-            <div ref={playerRef}>
+
+            {/* Lecteur vidéo — ref utilisée pour le scroll et le lancement */}
+            <section ref={playerRef} aria-label="Lecteur vidéo">
                 <MoviePlayer filmData={filmData} />
-            </div>
-            <MovieMap poiUrl={filmData.poi} />
-        </div>
+            </section>
+
+            {/* Carte des lieux de tournage */}
+            <section aria-label="Carte des lieux de tournage">
+                <MovieMap poiUrl={filmData.poi} />
+            </section>
+
+        </article>
     )
 }
 
 export default Movie
-
-

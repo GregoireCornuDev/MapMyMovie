@@ -9,6 +9,7 @@ interface SynopsisProps {
 type Lang = 'fr' | 'en' | 'es'
 
 const LANG_FLAGS: Record<Lang, string> = { en: '🇬🇧', fr: '🇫🇷', es: '🇪🇸' }
+const LANG_LABELS: Record<Lang, string> = { en: 'English', fr: 'Français', es: 'Español' }
 
 function Synopsis({ synopsisUrl, title = "Synopsis" }: SynopsisProps) {
     const [synopsisText, setSynopsisText] = useState<string>('')
@@ -16,6 +17,7 @@ function Synopsis({ synopsisUrl, title = "Synopsis" }: SynopsisProps) {
     const [error, setError] = useState<string | null>(null)
     const [lang, setLang] = useState<Lang>('en')
 
+    // Recharge le synopsis depuis l'API Wikipedia à chaque changement de langue
     useEffect(() => {
         const fetchSynopsis = async () => {
             if (!synopsisUrl) {
@@ -25,9 +27,11 @@ function Synopsis({ synopsisUrl, title = "Synopsis" }: SynopsisProps) {
             }
 
             try {
+                // Extrait le titre de la page depuis l'URL Wikipedia
                 const pageTitle = synopsisUrl.split('/wiki/')[1]
                 if (!pageTitle) throw new Error('URL Wikipedia invalide')
 
+                // L'API Wikipedia supporte le multilingue via le sous-domaine
                 const apiUrl = `https://${lang}.wikipedia.org/api/rest_v1/page/summary/${pageTitle}`
                 const response = await fetch(apiUrl)
                 if (!response.ok) throw new Error('Erreur lors du chargement du synopsis')
@@ -47,29 +51,45 @@ function Synopsis({ synopsisUrl, title = "Synopsis" }: SynopsisProps) {
     }, [synopsisUrl, lang])
 
     return (
-        <div className="synopsis">
+        <section className="synopsis" aria-labelledby="synopsis-title">
             <div className="synopsis-header">
-                <h3 className="synopsis-title">{title}</h3>
-                <div className="chapter-lang-selector">
-                    <span className="chapter-lang-label">Langue :</span>
+                <h3 id="synopsis-title" className="synopsis-title">{title}</h3>
+
+                {/* Sélecteur de langue — recharge le synopsis via l'API Wikipedia */}
+                <div
+                    className="chapter-lang-selector"
+                    role="group"
+                    aria-label="Langue du synopsis"
+                >
+                    <span className="chapter-lang-label" aria-hidden="true">Langue :</span>
                     {(['fr', 'en', 'es'] as Lang[]).map(l => (
                         <button
                             key={l}
                             className={`chapter-lang-btn ${lang === l ? 'active' : ''}`}
                             onClick={() => setLang(l)}
-                            title={l}
+                            aria-label={LANG_LABELS[l]}
+                            aria-pressed={lang === l}
                         >
-                            {LANG_FLAGS[l]}
+                            <span aria-hidden="true">{LANG_FLAGS[l]}</span>
                         </button>
                     ))}
                 </div>
             </div>
-            <div className="synopsis-content">
-                {loading && <p className="synopsis-loading">Chargement du synopsis...</p>}
-                {error && <p className="synopsis-error">{error}</p>}
-                {!loading && !error && <p className="synopsis-text">{synopsisText}</p>}
+
+            <div className="synopsis-content" aria-live="polite" aria-busy={loading}>
+                {loading && (
+                    <p role="status" className="synopsis-loading">
+                        Chargement du synopsis...
+                    </p>
+                )}
+                {error && (
+                    <p role="alert" className="synopsis-error">{error}</p>
+                )}
+                {!loading && !error && (
+                    <p className="synopsis-text">{synopsisText}</p>
+                )}
             </div>
-        </div>
+        </section>
     )
 }
 

@@ -11,11 +11,9 @@
     box-sizing: border-box;
 }
 
-.movie > .movie-player-container,
-.movie > .synopsis,
-.movie > div:has(.movie-player),
-.movie > .movie-map {
-    margin-left: 5rem;
+.movie > section,
+.movie > .synopsis {
+    margin-left: 4rem;
     margin-right: 5rem;
 }
 

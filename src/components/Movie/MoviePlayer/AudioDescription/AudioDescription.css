@@ -1,3 +1,6 @@
+/* =====================
+   Conteneur principal
+   ===================== */
 .audio-description-container {
     position: relative;
     display: inline-block;
@@ -9,6 +12,9 @@
     padding: 0.5rem;
 }
 
+/* =====================
+   Bouton principal (toggle)
+   ===================== */
 .audio-description-toggle {
     display: flex;
     align-items: center;
@@ -27,6 +33,8 @@
 .audio-description-toggle:focus {
     background-color: rgba(255, 255, 255, 0.1);
     border-color: rgba(255, 255, 255, 0.5);
+    outline: 2px solid white;
+    outline-offset: 2px;
 }
 
 .audio-description-toggle.enabled {
@@ -52,6 +60,9 @@
     margin-left: 0.3rem;
 }
 
+/* =====================
+   Menu déroulant
+   ===================== */
 .audio-description-menu {
     position: absolute;
     bottom: 100%;
@@ -66,42 +77,65 @@
     z-index: 1000;
 }
 
-/* Activation checkbox */
-.ad-enable-row {
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    margin-bottom: 0.75rem;
+.ad-separator {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.15);
+    margin: 0.25rem 0;
 }
 
-.ad-enable-label {
+/* =====================
+   Section MP3
+   ===================== */
+.ad-mp3-section {
+    padding-bottom: 0.75rem;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.ad-mp3-btn {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
+    margin-top: 0.5rem;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
     color: white;
-    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
     cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
 }
 
-.ad-enable-label input[type="checkbox"] {
-    width: 1rem;
-    height: 1rem;
-    cursor: pointer;
+.ad-mp3-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
 }
 
-/* Sélecteur de langue */
+.ad-mp3-btn.playing {
+    background: rgba(13, 110, 253, 0.3);
+    border-color: #0d6efd;
+}
+
+.ad-mp3-btn:focus {
+    outline: 2px solid white;
+    outline-offset: 2px;
+}
+
+/* =====================
+   Sélecteurs de langue
+   ===================== */
 .ad-lang-selector {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    margin-bottom: 0.75rem;
 }
 
 .ad-lang-label {
     font-size: 0.8rem;
     color: rgba(255, 255, 255, 0.6);
-    margin-right: 0.5rem;
+    margin-right: 0.25rem;
 }
 
 .ad-lang-btn {
@@ -126,11 +160,64 @@
     background-color: rgba(255, 255, 255, 0.15);
 }
 
-/* Scène actuelle */
+.ad-lang-btn:focus {
+    outline: 2px solid white;
+    outline-offset: 2px;
+}
+
+.ad-lang-btn:disabled {
+    opacity: 0.25;
+    cursor: not-allowed;
+}
+
+/* =====================
+   Curseur de volume
+   ===================== */
+.ad-volume {
+    width: 80px;
+    cursor: pointer;
+    accent-color: white;
+    vertical-align: middle;
+}
+
+.ad-volume:focus {
+    outline: 2px solid white;
+    outline-offset: 2px;
+}
+
+/* =====================
+   Section synthèse vocale
+   ===================== */
+.ad-enable-row {
+    padding-bottom: 0.75rem;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.ad-enable-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.ad-enable-label input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
+    accent-color: #0d6efd;
+}
+
+/* =====================
+   Scène actuelle
+   ===================== */
 .ad-current-scene {
     background-color: rgba(255, 255, 255, 0.05);
     border-radius: 6px;
     padding: 0.75rem;
+    margin-top: 0.75rem;
 }
 
 .ad-scene-header {
@@ -160,7 +247,11 @@
     margin: 0;
 }
 
-/* Classe pour lecteurs d'écran - invisible visuellement mais accessible */
+/* =====================
+   Accessibilité
+   ===================== */
+
+/* Invisible visuellement mais lisible par les lecteurs d'écran */
 .sr-only {
     position: absolute;
     width: 1px;
@@ -172,4 +263,3 @@
     white-space: nowrap;
     border: 0;
 }
-

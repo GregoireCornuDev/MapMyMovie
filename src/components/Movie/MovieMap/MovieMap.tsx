@@ -5,6 +5,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 
+// Fix des icônes Leaflet qui ne se chargent pas correctement avec Vite
 delete (L.Icon.Default.prototype as any)._getIconUrl
 L.Icon.Default.mergeOptions({
     iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
@@ -15,6 +16,7 @@ L.Icon.Default.mergeOptions({
 type Lang = 'en' | 'fr' | 'es'
 
 const LANG_FLAGS: Record<Lang, string> = { en: '🇬🇧', fr: '🇫🇷', es: '🇪🇸' }
+const LANG_LABELS: Record<Lang, string> = { en: 'English', fr: 'Français', es: 'Español' }
 
 interface Timestamp {
     time: string
@@ -43,6 +45,7 @@ function timestampToSeconds(time: string): number {
     return h * 3600 + m * 60 + s
 }
 
+// Retourne le POI dont le timestamp est le plus proche du temps actuel sans le dépasser
 function getActivePoi(pois: Poi[], currentTime: number): { poi: Poi, ts: Timestamp } | null {
     let active: { poi: Poi, ts: Timestamp } | null = null
     let closestTime = -1
@@ -72,6 +75,7 @@ function getScene(ts: Timestamp, lang: Lang): string {
     return ts.scene
 }
 
+// Recentre la carte sur le POI actif à chaque changement
 function MapController({ poi }: { poi: Poi | null }) {
     const map = useMap()
     useEffect(() => {
@@ -85,6 +89,7 @@ function MovieMap({ poiUrl }: MovieMapProps) {
     const [pois, setPois] = useState<Poi[]>([])
     const [lang, setLang] = useState<Lang>('fr')
 
+    // Charge les points d'intérêt depuis le backend
     useEffect(() => {
         fetch(poiUrl).then(r => r.json()).then(setPois).catch(console.error)
     }, [poiUrl])
@@ -92,7 +97,7 @@ function MovieMap({ poiUrl }: MovieMapProps) {
     const active = getActivePoi(pois, currentTime)
 
     return (
-        <div className="movie-map">
+        <section className="movie-map" aria-label="Carte des lieux de tournage">
             <div className="movie-map-header">
                 <h3>Locate filming locations</h3>
             </div>
@@ -101,17 +106,30 @@ function MovieMap({ poiUrl }: MovieMapProps) {
                 {pois.length > 0 && (
                     <>
                         {active && (
-                            <div className="scene-info">
-                                <div className="lang-selector">
+                            <div
+                                className="scene-info"
+                                role="status"
+                                aria-live="polite"
+                                aria-label={`Lieu actuel : ${getTitle(active.poi, lang)}`}
+                            >
+                                {/* Sélecteur de langue de l'encart */}
+                                <div className="lang-selector" role="group" aria-label="Langue de la description">
                                     {(['fr', 'en', 'es'] as Lang[]).map(l => (
-                                        <button key={l} className={`lang-btn ${lang === l ? 'active' : ''}`}
-                                                onClick={() => setLang(l)}>
-                                            {LANG_FLAGS[l]}
+                                        <button
+                                            key={l}
+                                            className={`lang-btn ${lang === l ? 'active' : ''}`}
+                                            onClick={() => setLang(l)}
+                                            aria-label={LANG_LABELS[l]}
+                                            aria-pressed={lang === l}
+                                        >
+                                            {/* aria-hidden : le label du bouton suffit */}
+                                            <span aria-hidden="true">{LANG_FLAGS[l]}</span>
                                         </button>
                                     ))}
                                 </div>
+
                                 <div className="scene-title">
-                                    <span className="scene-icon">🎬</span>
+                                    <span className="scene-icon" aria-hidden="true">🎬</span>
                                     <strong>{getTitle(active.poi, lang)}</strong>
                                 </div>
                                 <div className="scene-text">
@@ -119,21 +137,27 @@ function MovieMap({ poiUrl }: MovieMapProps) {
                                 </div>
                             </div>
                         )}
+
+                        {/* Carte Leaflet — non navigable au clavier par défaut (limitation Leaflet) */}
                         <MapContainer
                             center={[pois[0].latitude, pois[0].longitude]}
                             zoom={10}
-                            style={{height: '400px', width: '100%'}}
+                            style={{ height: '400px', width: '100%' }}
+                            aria-label="Carte interactive des lieux de tournage"
                         >
                             <TileLayer
                                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                 attribution='&copy; OpenStreetMap contributors'
                             />
-                            <MapController poi={active?.poi ?? null}/>
+                            <MapController poi={active?.poi ?? null} />
                             {pois.map(poi => (
                                 <Marker
                                     key={poi.id}
                                     position={[poi.latitude, poi.longitude]}
                                     opacity={active?.poi.id === poi.id ? 1 : 0.4}
+                                    // title utilisé par Leaflet comme tooltip et texte alternatif
+                                    title={getTitle(poi, lang)}
+                                    alt={getTitle(poi, lang)}
                                 >
                                     <Popup>
                                         <strong>{getTitle(poi, lang)}</strong>
@@ -145,7 +169,7 @@ function MovieMap({ poiUrl }: MovieMapProps) {
                     </>
                 )}
             </div>
-        </div>
+        </section>
     )
 }
 

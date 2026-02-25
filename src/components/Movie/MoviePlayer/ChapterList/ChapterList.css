@@ -119,6 +119,9 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     cursor: pointer;
     transition: background-color 0.2s ease;
+    text-align: left;
+    width: 100%;
+    background: transparent;
 }
 
 .chapter-item:last-child {

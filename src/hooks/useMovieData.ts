@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
-import { MovieData, FALLBACK_MOVIE_DATA } from '../types/Movie'
+import { MovieData } from '../types/Movie'
+import { FALLBACK_MOVIE_DATA } from '../mocks/movieDataFallback'
 
 export interface MovieDataState {
     filmData: MovieData | null

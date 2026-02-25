@@ -2,5 +2,5 @@ export interface DiscussionMessage {
     when: string;
     name: string;
     message: string;
-    moment?: string;
+    moment?: number;
 }
