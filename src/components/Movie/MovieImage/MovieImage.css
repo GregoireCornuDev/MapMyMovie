@@ -13,24 +13,17 @@
     justify-content: center;
     width: 100%;
     box-sizing: border-box;
-    padding: 0;
-    margin: 0;
 }
 
 .image-container {
     position: relative;
     overflow: hidden;
-    border-radius: 0;
-    box-shadow: none;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
-    box-sizing: border-box;
     flex: 1;
     background-color: #000;
-    padding: 0;
-    margin: 0;
 }
 
 .image {
@@ -39,7 +32,7 @@
     display: block;
 }
 
-/* Masque dégradé sur le bas */
+/* Masque dégradé décoratif sur le bas de l'image */
 .image-gradient-mask {
     position: absolute;
     bottom: 0;
@@ -47,19 +40,18 @@
     width: 100%;
     height: 40%;
     background: linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 0) 0%,
-        rgba(0, 0, 0, 0.3) 50%,
-        rgba(0, 0, 0, 0.6) 100%
+            to bottom,
+            rgba(0, 0, 0, 0) 0%,
+            rgba(0, 0, 0, 0.3) 50%,
+            rgba(0, 0, 0, 0.6) 100%
     );
     pointer-events: none;
 }
 
-/* Flèches de navigation */
+/* Flèches de navigation — figées à une hauteur fixe depuis le haut */
 .carousel-arrow {
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
+    top: 400px;
     background-color: rgba(0, 0, 0, 0.5);
     border: none;
     color: white;
@@ -80,10 +72,9 @@
     background-color: rgba(0, 0, 0, 0.8);
 }
 
-.carousel-arrow i {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.carousel-arrow:focus {
+    outline: 2px solid white;
+    outline-offset: 2px;
 }
 
 .carousel-arrow-left {
@@ -94,7 +85,7 @@
     right: 0.5rem;
 }
 
-/* Bouton Watch Now */
+/* Bouton Watch Now — positionné en bas de l'image */
 .watch-now-button {
     position: absolute;
     top: 95%;
@@ -116,12 +107,8 @@
 }
 
 @keyframes pulse {
-    0%, 100% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.5;
-    }
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
 }
 
 .watch-now-button:hover {
@@ -135,5 +122,3 @@
     height: 3rem;
     object-fit: contain;
 }
-
-
