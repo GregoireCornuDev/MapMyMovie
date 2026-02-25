@@ -1,4 +1,4 @@
-# 🎬 MapMyMovie
+# MapMyMovie
 
 Application web interactive de visionnage de film, développée dans le cadre d'un TP en 3ème année à l'ENSSAT (IAI-3).
 
@@ -6,7 +6,7 @@ Application web interactive de visionnage de film, développée dans le cadre d'
 
 ---
 
-## 🚀 Lancement
+## Lancement
 
 ```bash
 npm install
@@ -17,7 +17,7 @@ npm run dev
 
 ---
 
-## 🛠️ Stack technique
+## Stack technique
 
 - **React 18** + **TypeScript**
 - **Vite** (bundler)
@@ -29,7 +29,7 @@ npm run dev
 
 ---
 
-## 📁 Structure du projet
+## Structure du projet
 
 ```
 src/
@@ -73,41 +73,41 @@ public/
 
 ---
 
-## ✨ Fonctionnalités
+## Fonctionnalités
 
-### 🎥 Lecteur vidéo
+### Lecteur vidéo
 - Lecture/pause synchronisée avec tous les composants via le contexte React
 - Navigation par chapitres (trilingue : FR / EN / ES)
 - Sous-titres en français, anglais et espagnol
 - En développement local, les sous-titres sont chargés depuis `/public/mocks/` pour contourner les restrictions CORS du backend
 
-### 🗺️ Carte des lieux de tournage
+### Carte des lieux de tournage
 - Carte interactive OpenStreetMap via React-Leaflet
 - Marqueurs des POI (Points d'Intérêt) liés au film
 - Synchronisation automatique avec le timecode de lecture
 - Encart de description de la scène en cours (trilingue)
 
-### 📖 Synopsis
+### Synopsis
 - Chargé dynamiquement depuis l'API Wikipedia
 - Disponible en français, anglais et espagnol
 
-### 🔊 Audio-description
+### Audio-description
 - **Synthèse vocale** (Web Speech API) : lit la description de la scène en cours à voix haute, en FR / EN / ES
 - **Piste MP3** : audio-description complète en anglais, synchronisée avec le timecode du film. La piste vidéo est coupée (mute) pendant la lecture du MP3. Curseur de volume dédié.
 
-### 💬 Discussion en temps réel
+### Discussion en temps réel
 - Chat connecté via WebSocket (`wss://tp-iai3.cleverapps.io/`)
 - Partage de moments : envoie le timecode actuel du film dans le chat
 - Identité personnalisable (nom + avatar), sauvegardée en localStorage
 - Scroll automatique vers le dernier message
 
-### 🛡️ Fallback
+### Fallback
 - Si le backend est indisponible, une modale propose d'utiliser les données locales (mocks)
 - Chaque composant a ses propres données de secours indépendantes
 
 ---
 
-## ♿ Accessibilité (WCAG)
+## Accessibilité (WCAG)
 
 L'accessibilité a été une priorité tout au long du développement :
 
@@ -122,7 +122,7 @@ L'accessibilité a été une priorité tout au long du développement :
 
 ---
 
-## 🌐 Backend
+## Backend
 
 L'application consomme une API REST fournie :
 
@@ -135,4 +135,9 @@ L'application consomme une API REST fournie :
 | Sous-titres | `https://tp-iai3.cleverapps.io/projet/subtitles-{fr,en,es}.srt` |
 | WebSocket chat | `wss://tp-iai3.cleverapps.io/` |
 
-> ⚠️ Les sous-titres sont bloqués par CORS en développement local — les fichiers locaux dans `public/mocks/` sont utilisés automatiquement via `import.meta.env.DEV`.
+## Note sur les sous-titres
+
+Les fichiers de sous-titres hébergés sur le backend (`tp-iai3.cleverapps.io`) sont bloqués
+par les restrictions CORS du navigateur en développement local. L'application utilise donc
+des copies locales dans `public/mocks/`. En production sur le même domaine que le backend,
+les fichiers distants fonctionneraient sans restriction.

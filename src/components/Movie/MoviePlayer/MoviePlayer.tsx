@@ -25,11 +25,10 @@ function MoviePlayer({ filmData }: MoviePlayerProps) {
     // Ref pour éviter la boucle infinie onPlay/onPause ↔ isPlaying
     const isPlayingRef = useRef(isPlaying)
 
-    // Ref pour stocker le timeout de pause déclenché par le changement de mute
+    // Ref pour stocker le timeout de pause — évite les pauses intempestives lors du seek
     const pauseTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-    // Quand la lecture démarre, met à jour le contexte
-    // et la ref pour éviter les appels redondants
+    // Quand la lecture démarre, annule un éventuel pause en attente et met à jour le contexte
     const handlePlay = () => {
         if (pauseTimeout.current) clearTimeout(pauseTimeout.current)
         if (!isPlayingRef.current) {
@@ -38,13 +37,9 @@ function MoviePlayer({ filmData }: MoviePlayerProps) {
         }
     }
 
-    // Même logique pour la pause
+    // Délai de 200ms pour ignorer les pauses transitoires lors du seek ou du changement de mute
     const handlePause = () => {
-        // Ignore les événements pause déclenchés par le changement de mute
         if (playerRef.current?.muted !== isVideoMuted) return
-
-        // Délai pour éviter les pauses intempestives lors de l'activation/désactivation du mute
-        /* Ce problème arrive fréquement au cours du développement */
         pauseTimeout.current = setTimeout(() => {
             if (isPlayingRef.current) {
                 isPlayingRef.current = false
@@ -75,6 +70,7 @@ function MoviePlayer({ filmData }: MoviePlayerProps) {
     }, [isPlaying, setCurrentTime])
 
     // Active/désactive la piste de sous-titres correspondant à la langue choisie
+    // Les pistes sont gérées nativement par ReactPlayer v3 via les enfants <track>
     const handleSubtitleChange = (lang: SubtitleLang) => {
         setCurrentSubtitle(lang)
         setShowSubMenu(false)
@@ -85,55 +81,10 @@ function MoviePlayer({ filmData }: MoviePlayerProps) {
         }
     }
 
-    // Injecte les pistes de sous-titres dans l'élément <video> au montage
-    // (config.file n'existe plus dans react-player v3, injection manuelle nécessaire)
-    useEffect(() => {
-        const video = playerRef.current
-        if (!video) return
-
-        // Vérifie si les pistes sont déjà injectées par leur langue
-        const existingLangs = Array.from(video.textTracks).map(t => t.language)
-        if (existingLangs.includes('fr')) return
-
-        // En dev, les .srt du backend sont bloqués par CORS — utilise les copies locales dans public/mocks/
-        //const isDev = import.meta.env.DEV
-        const isDev = true // Utilise les sous-titres locaux du fait des problèmes de CORS
-        const subtitleSources = {
-                fr: isDev ? '/mocks/subtitles-fr.srt' : filmData.subtitles.fr,
-                en: isDev ? '/mocks/subtitles-en.srt' : filmData.subtitles.en,
-                es: isDev ? '/mocks/subtitles-es.srt' : filmData.subtitles.es,
-            }
-
-        ;[
-            { src: subtitleSources.fr, srcLang: 'fr', label: 'Français' },
-            { src: subtitleSources.en, srcLang: 'en', label: 'English' },
-            { src: subtitleSources.es, srcLang: 'es', label: 'Español' },
-        ].forEach(({ src, srcLang, label }) => {
-            const track = document.createElement('track')
-            track.kind = 'subtitles'
-            track.src = src
-            track.srclang = srcLang
-            track.label = label
-            video.appendChild(track)
-            // Met la piste en hidden pour forcer le chargement sans affichage immédiat
-            const textTrack = video.textTracks[video.textTracks.length - 1]
-            if (textTrack) textTrack.mode = 'hidden'
-        })
-        // Délai pour laisser les pistes se charger avant d'activer le français par défaut
-        setTimeout(() => handleSubtitleChange('fr'), 3000)
-    }, [])
-
-    useEffect(() => {
-        console.log('playerRef.current:', playerRef.current)
-        console.log('type:', playerRef.current?.constructor?.name)
-        const video = playerRef.current
-        console.log('textTracks.length:', video?.textTracks.length)
-        console.log('textTracks:', video?.textTracks)
-    }, [])
-
     return (
         <div className="movie-player-container">
             {/* Lecteur vidéo — les contrôles natifs sont conservés pour l'accessibilité clavier */}
+            {/* Les sous-titres sont injectés via des enfants <track> — syntaxe ReactPlayer v3 */}
             <div className="movie-player">
                 <ReactPlayer
                     ref={playerRef}
@@ -145,7 +96,17 @@ function MoviePlayer({ filmData }: MoviePlayerProps) {
                     onPlay={handlePlay}
                     onPause={handlePause}
                     onError={console.error}
-                />
+                >
+                    {/* Pistes de sous-titres locales — les fichiers distants sont bloqués par CORS */}
+                    {/*
+                    <track kind="subtitles" src={filmData.subtitles.fr} srcLang="fr" label="Français" default/>
+                    <track kind="subtitles" src={filmData.subtitles.en} srcLang="en" label="English"/>
+                    <track kind="subtitles" src={filmData.subtitles.es} srcLang="es" label="Español"/>
+                    */}
+                    <track kind="subtitles" src="/mocks/subtitles-fr.srt" srcLang="fr" label="Français"/>
+                    <track kind="subtitles" src="/mocks/subtitles-en.srt" srcLang="en" label="English"/>
+                    <track kind="subtitles" src="/mocks/subtitles-es.srt" srcLang="es" label="Español"/>
+                </ReactPlayer>
             </div>
 
             {/* Barre de contrôles personnalisée sous le lecteur */}
