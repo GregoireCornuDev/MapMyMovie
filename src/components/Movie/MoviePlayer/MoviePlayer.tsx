@@ -70,7 +70,7 @@ function MoviePlayer({ filmData }: MoviePlayerProps) {
     }, [isPlaying, setCurrentTime])
 
     // Active/désactive la piste de sous-titres correspondant à la langue choisie
-    // Les pistes sont gérées nativement par ReactPlayer v3 via les enfants <track>
+    // Les pistes sont gérées nativement par ReactPlayer v3 via les kind <track>
     const handleSubtitleChange = (lang: SubtitleLang) => {
         setCurrentSubtitle(lang)
         setShowSubMenu(false)
