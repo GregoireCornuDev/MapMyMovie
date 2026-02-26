@@ -2,7 +2,7 @@ import './Discussion.css'
 import { useDiscussionSocket } from '../../hooks/useDiscussionSocket'
 import MessageList from './MessageList/MessageList'
 import MessageInput from './MessageInput/MessageInput'
-import Identity from '../Header/Identity/Identity'
+import Identity from './Identity/Identity'
 
 interface DiscussionProps {
     wsUrl: string

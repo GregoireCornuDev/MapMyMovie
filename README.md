@@ -37,6 +37,8 @@ src/
 │   ├── Header/                  # En-tête avec titre du film
 │   ├── FallbackModal/           # Modale si le backend est indisponible
 │   ├── Discussion/              # Chat en temps réel (WebSocket)
+│   │   ├── Identity/            # Identité de l'utilisateur (nom + avatar)
+│   │   │   └── IdentityModal/   # Modale de modification de l'identité
 │   │   ├── MessageList/         # Affichage des messages
 │   │   └── MessageInput/        # Saisie et envoi de messages
 │   └── Movie/

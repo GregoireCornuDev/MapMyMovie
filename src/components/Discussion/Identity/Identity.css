@@ -10,13 +10,35 @@
     flex-shrink: 0;
     box-sizing: border-box;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background 0.2s ease;
     background: rgba(255, 255, 255, 0.03);
+    border: none;
+    border-radius: 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    outline: none !important;
+    box-shadow: none !important;
+    width: 100%;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
 }
 
 .identity:hover {
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.1);
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.identity:focus,
+.identity:active {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.identity:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.2) !important;
+    outline-offset: -2px;
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: none !important;
 }
 
 .identity-avatar {
@@ -50,6 +72,3 @@
     color: #ffffff;
     font-weight: 600;
 }
-
-
-

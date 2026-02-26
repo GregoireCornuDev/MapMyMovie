@@ -1,6 +1,6 @@
 import './Identity.css'
 import { useState, useEffect } from 'react'
-import IdentityModal from './IdentityModal/IdentityModal'
+import IdentityModal from './IdentityModal/IdentityModal.tsx'
 
 interface IdentityProps {
     name?: string
