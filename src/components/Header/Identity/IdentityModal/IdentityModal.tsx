@@ -15,6 +15,12 @@ function IdentityModal({ isOpen, onClose, onSave, currentName = "Who are you ?",
     const [dragOver, setDragOver] = useState(false)
     const closeButtonRef = useRef<HTMLButtonElement>(null)
 
+    // Met à jour le state local quand les props changent (ex: chargement depuis localStorage)
+    useEffect(() => {
+        setName(currentName)
+        setAvatarUrl(currentAvatarUrl)
+    }, [currentName, currentAvatarUrl])
+
     // Remet le focus sur le bouton fermer à l'ouverture de la modale
     useEffect(() => {
         if (isOpen) closeButtonRef.current?.focus()
