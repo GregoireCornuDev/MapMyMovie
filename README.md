@@ -109,6 +109,16 @@ public/
 
 ---
 
+## Piste audio-description
+
+Le fichier `public/mocks/audio-description-en.mp3` n'est pas inclus dans le dépôt car il dépasse la limite de taille GitHub (153 Mo).
+
+Pour l'obtenir, téléchargez-le manuellement depuis l'ENT de l'ENSSAT et placez-le dans `public/mocks/audio-description-en.mp3`.
+
+Sans ce fichier, le bouton "Lire l'audio-description" sera présent mais n'aura aucun effet.
+
+---
+
 ## Accessibilité (WCAG)
 
 L'accessibilité a été une priorité tout au long du développement :
